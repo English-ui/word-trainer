@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тренировка английских слов</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      transition: background 2s ease-in-out;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      width: 500px;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      outline: none;
+    }
+    .result, .progress {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .wrong-list {
+      text-align: left;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #ffffff33;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Переведи на английский:</h2>
+  <div id="russian-word">Загрузка...</div>
+  <input type="text" id="user-input" placeholder="Введите перевод и нажмите Enter">
+  <div class="result" id="result"></div>
+  <div class="progress" id="progress"></div>
+  <div class="wrong-list" id="summary"></div>
+  <button id="next-round" onclick="startNextRound()" style="display:none;">Следующие 10 слов</button>
+</div>
+
+<script>
+const words = [
+  { ru: "Неопределенный артикль", en: "A" },
+  { ru: "О чем либо", en: "About" },
+  { ru: "Аэропорт", en: "Airport" },
+  { ru: "Яблоко", en: "Apple" },
+  { ru: "Аргентина", en: "Argentina" },
+  { ru: "Сумка", en: "Bag" },
+  { ru: "Книга", en: "Book" },
+  { ru: "Здание", en: "Building" },
+  { ru: "Автобус", en: "Bus" },
+  { ru: "Шеф повар", en: "Chef" },
+  { ru: "Класс", en: "Class" },
+  { ru: "Компания", en: "Company" },
+  { ru: "Доктор", en: "Doctor" },
+  { ru: "Электронное письмо", en: "Email" },
+  { ru: "Инженер", en: "Engineer" },
+  { ru: "Английский", en: "English" },
+  { ru: "Друг", en: "Friend" },
+  { ru: "Сад", en: "Garden" },
+  { ru: "Парень", en: "Guy" },
+  { ru: "Больница", en: "Hospital" },
+  { ru: "Итальянский", en: "Italian" },
+  { ru: "Италия", en: "Italy" },
+  { ru: "Профессия", en: "Job" },
+  { ru: "Ключ", en: "Key" },
+  { ru: "Языковая школа", en: "Language school" },
+  { ru: "Ноутбук", en: "Laptop" },
+  { ru: "Письмо", en: "Letter" },
+  { ru: "Мексика", en: "Mexico" },
+  { ru: "Рядом", en: "Near" },
+  { ru: "Музей", en: "Museum" },
+  { ru: "Возле", en: "Next to" },
+  { ru: "Хороший", en: "Nice" },
+  { ru: "Блокнот", en: "Notepad" },
+  { ru: "Медсестра", en: "Nurse" },
+  { ru: "Предмет", en: "Object" },
+  { ru: "(время:...часов)", en: "O’clock" },
+  { ru: "Офис", en: "Office" },
+  { ru: "Ручка", en: "Pen" },
+  { ru: "Телефон", en: "Phone" },
+  { ru: "Фото", en: "Photo" },
+  { ru: "Ресторан", en: "Restaurant" },
+  { ru: "Река", en: "River" },
+  { ru: "Дорога", en: "Road" },
+  { ru: "Румыниа", en: "Romania" },
+  { ru: "Школа", en: "School" },
+  { ru: "Продавец", en: "Shop assistant" },
+  { ru: "Сестра", en: "Sister" },
+  { ru: "Сквер", en: "Square" },
+  { ru: "Станция", en: "Station" },
+  { ru: "Улица", en: "Street" },
+  { ru: "Студент", en: "Student" },
+  { ru: "Планшет", en: "Tablet" },
+  { ru: "Водитель такси", en: "Taxi driver" },
+  { ru: "Учитель", en: "Teacher" },
+  { ru: "Таиланд", en: "Thailand" },
+  { ru: "Там", en: "There" },
+  { ru: "Эти", en: "These" },
+  { ru: "Это", en: "This" },
+  { ru: "Те", en: "Those" },
+  { ru: "Время", en: "Time" },
+  { ru: "Поезд", en: "Train" },
+  { ru: "Зонт", en: "Umbrella" },
+  { ru: "Университет", en: "University" },
+  { ru: "Официант", en: "Waiter" },
+  { ru: "Кошелек", en: "Wallet" },
+  { ru: "Неделя", en: "Week" },
+  { ru: "Кто", en: "Who" },
+  { ru: "11", en: "Eleven" },
+  { ru: "12", en: "Twelve" },
+  { ru: "13", en: "Thirteen" },
+  { ru: "14", en: "Fourteen" },
+  { ru: "15", en: "Fifteen" },
+  { ru: "17", en: "Seventeen" },
+  { ru: "18", en: "Eighteen" },
+  { ru: "19", en: "Nineteen" },
+  { ru: "20", en: "Twenty" },
+  { ru: "21", en: "Twenty-one" },
+  { ru: "22", en: "Twenty-two" },
+  { ru: "Тридцать", en: "Thirty" },
+  { ru: "Сорок", en: "Forty" },
+  { ru: "50", en: "Fifty" },
+  { ru: "60", en: "Sixty" },
+  { ru: "70", en: "Seventy" },
+  { ru: "80", en: "Eighty" },
+  { ru: "90", en: "Ninety" },
+  { ru: "100", en: "A hundred" }
+];
+
+const backgroundImages = [
+  "url('https://source.unsplash.com/1600x900/?education')",
+  "url('https://source.unsplash.com/1600x900/?books')",
+  "url('https://source.unsplash.com/1600x900/?nature')",
+  "url('https://source.unsplash.com/1600x900/?city')",
+  "url('https://source.unsplash.com/1600x900/?technology')"
+];
+
+let currentRound = [];
+let roundIndex = 0;
+let globalIndex = 0;
+let wrongAnswers = [];
+let correctCount = 0;
+
+const input = document.getElementById("user
