@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Проверка перевода слов</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+    }
+    .correct {
+      color: green;
+      font-weight: bold;
+    }
+    .wrong {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>📚 Проверь себя: переведи слова на английский</h2>
+  <p>Впиши перевод рядом с каждым словом. Правильность будет проверяться автоматически.</p>
+
+  <table id="wordTable">
+    <thead>
+      <tr>
+        <th>Русское слово</th>
+        <th>Твой перевод (на английском)</th>
+        <th>Результат</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Слова будут добавлены скриптом -->
+    </tbody>
+  </table>
+
+  <script>
+    const words = {
+      "Одиннадцать": "eleven",
+      "Двенадцать": "twelve",
+      "Тринадцать": "thirteen",
+      "Четырнадцать": "fourteen",
+      "Пятнадцать": "fifteen",
+      "Шестнадцать": "sixteen",
+      "Семнадцать": "seventeen",
+      "Восемнадцать": "eighteen",
+      "Девятнадцать": "nineteen",
+      "Двадцать": "twenty",
+      "Двадцать один": "twenty-one",
+      "Тридцать": "thirty",
+      "Сорок": "forty",
+      "Пятьдесят": "fifty",
+      "Шестьдесят": "sixty",
+      "Семьдесят": "seventy",
+      "Восемьдесят": "eighty",
+      "Девяносто": "ninety",
+      "Сто": "one hundred",
+      "Кто": "who",
+      "Кошелек": "wallet",
+      "Зонтик": "umbrella",
+      "Те": "those",
+      "Это": "this",
+      "Эти": "these",
+      "Планшет": "tablet",
+      "Ручка": "pen",
+      "Объект": "object",
+      "Ноутбук": "laptop",
+      "Ключ": "key",
+      "Книга": "book",
+      "Сумка": "bag",
+      "Яблоко": "apple",
+      "Блокнот": "notebook",
+      "Там": "there",
+      "Телефон": "phone"
+    };
+
+    const tbody = document.querySelector("#wordTable tbody");
+
+    for (const [russian, english] of Object.entries(words)) {
+      const row = document.createElement("tr");
+
+      const russianCell = document.createElement("td");
+      russianCell.textContent = russian;
+
+      const inputCell = document.createElement("td");
+      const input = document.createElement("input");
+      input.setAttribute("data-answer", english.toLowerCase());
+      input.addEventListener("blur", checkAnswer);
+      inputCell.appendChild(input);
+
+      const resultCell = document.createElement("td");
+      resultCell.className = "result";
+
+      row.appendChild(russianCell);
+      row.appendChild(inputCell);
+      row.appendChild(resultCell);
+
+      tbody.appendChild(row);
+    }
+
+    function checkAnswer(event) {
+      const input = event.target;
+      const userAnswer = input.value.trim().toLowerCase();
+      const correctAnswer = input.getAttribute("data-answer");
+      const resultCell = input.closest("tr").querySelector(".result");
+
+      if (userAnswer === "") {
+        resultCell.textContent = "";
+        return;
+      }
+
+      if (userAnswer === correctAnswer) {
+        resultCell.textContent = "✅ Верно";
+        resultCell.className = "result correct";
+      } else {
+        resultCell.textContent = `❌ Неверно. Правильно: "${correctAnswer}"`;
+        resultCell.className = "result wrong";
+      }
+    }
+  </script>
+</body>
+</html>
